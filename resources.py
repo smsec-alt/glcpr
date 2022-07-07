@@ -3,9 +3,9 @@ import plotly.express as px
 
 
 
-def get_chart(df: pd.DataFrame, x_values:str, y_values:str, title:str, labels=None):
+def get_chart(df: pd.DataFrame, x_values:str, y_values:str, title:str, color=None, labels=None):
     fig = px.line(df, x=x_values, y=y_values,
-                        color='year', title=title,
+                        color=color, title=title,
                         color_discrete_sequence=px.colors.qualitative.G10,
                         labels=labels)
     
