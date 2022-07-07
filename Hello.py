@@ -1,7 +1,7 @@
 import logging
 import streamlit as st
-# from resources import summary_dict
 from quickstart import credentials, download_dataframe
+from resources import get_chart
 
 
 logging.getLogger('googleapicliet.discovery_cache').setLevel(logging.ERROR)
@@ -13,8 +13,9 @@ with st.sidebar:
 
 
 def main():   
-    df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country}.csv')
-    st.write(df)
+    df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country}.csv', parse_dates=['TRADEDATE'])
+    # st.write(df)
+    st.plotly_chart(get_chart(df, 'TRADEDATE', 'CLOSE', f'{add_country} - Cash Prices'))
     
 if __name__ == '__main__':
     main()

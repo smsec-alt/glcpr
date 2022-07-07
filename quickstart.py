@@ -1,8 +1,8 @@
-# from __future__ import print_function
-
-from typing import List
 import os.path
 import google.auth
+import pandas as pd
+from io import BytesIO
+from typing import List
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -10,8 +10,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
-import pandas as pd
-from io import BytesIO
+from sqlalchemy import all_
 
 
 def credentials() -> Credentials:
@@ -21,21 +20,19 @@ def credentials() -> Credentials:
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    if os.path.exists(os.path.join("support_files", "token.json")):
+        creds = Credentials.from_authorized_user_file(os.path.join("support_files", "token.json"), SCOPES)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file(os.path.join("support_files", "credentials.json"), SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.json', 'w') as token:
+        with open(os.path.join("support_files", "token.json"), 'w') as token:
             token.write(creds.to_json())
     return creds
-
 
 
 def search_file(creds: Credentials, query: str = "mimeType='text/csv'") -> List[dict]:
@@ -66,7 +63,7 @@ def search_file(creds: Credentials, query: str = "mimeType='text/csv'") -> List[
     return files
 
 
-def download_dataframe(creds: Credentials, id:str = None, filename: str = None) -> pd.DataFrame:
+def download_dataframe(creds: Credentials, id:str = None, filename: str = None, parse_dates=None, index_col=None) -> pd.DataFrame:
     service = build("drive", "v3", credentials=creds, cache_discovery=False)
     if not filename is None:
         found_file = search_file(creds, query=f"name = '{filename}'")[0]
@@ -79,7 +76,7 @@ def download_dataframe(creds: Credentials, id:str = None, filename: str = None) 
         _,done = downloader.next_chunk()
     file.seek(0)
     
-    df = pd.read_csv(file) if 'csv' in filename else pd.read_excel(file)
+    df = pd.read_csv(file, parse_dates=parse_dates, index_col=index_col) if 'csv' in filename else pd.read_excel(file, parse_dates=parse_dates)
     
     return df
 
@@ -115,13 +112,17 @@ def print_filenames(creds: Credentials, pageSize: int=10) -> None:
         print(f'An error occurred: {error}')    
         
 
-
-
 def main():
     creds = credentials()
-    # print_filenames(creds=creds, pageSize=5)
-    # print(download_dataframe(creds=creds, id='1Qi7UdgLc5jnUqvqddDCNI6o8mTXeKGWQ'))
-    upload_file(creds=creds, filename='123.csv')
+    # print(creds)
+    all_files = search_file(creds, "name contains 'Russia_1017327'")
+    # for file in all_files:
+    #     print(file['id'], file['name'])
+    # download_dataframe(creds=creds, id=file['id'])
+    region = '1017327'
+    for w in ['daily-precipitation', 'max-temperature', 'min-temperature', 'average-temperature']:
+        print(download_dataframe(creds=creds, filename=f"Russia_{region}_{w}.csv", parse_dates=['time']))
+    # upload_file(creds=creds, filename='123.csv')
 
 
 if __name__ == '__main__':

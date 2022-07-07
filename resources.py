@@ -1,28 +1,16 @@
-
-bearer_token = 'AAAAAAAAAAAAAAAAAAAAAMx7cwEAAAAAGpt5INEcwcSdGiY9Rm4y98d9EpU%3DJkLAwRnJLoBqIllppv3lcxt1muXr7iKSDaqzjjPl2ItuvHcVYK'
-
-
-styles = [
-    dict(selector="th", props=[("color", "#005b65"),
-                               ("border", "1px solid #FFFFFF"),
-                               ("border-collapse", "collapse"),
-                               ("background", "#FFFFFF"),
-                               ("text-transform", "uppercase"),
-                               ("font-size", "12px")
-                               ]),
-    dict(selector="td", props=[("color", "#000"),
-                               ("padding", "15px 20px"),
-                               ('text-align', 'center'),
-                               ("font-size", "12px")
-                               ])
-]
-
-for country in countries_list:
-    new_key_drought, new_key_flooding, new_key_heat = f'drought_{country}', f'flooding_{country}', f'heatwave_{country}'
-    vlookup_dict[new_key_drought] = f"{country} ({vlookup_dict['drought']})"
-    vlookup_dict[new_key_flooding] = f"{country} ({vlookup_dict['flooding']})"
-    vlookup_dict[new_key_heat] = f"{country} ({vlookup_dict['heat']})"
+import pandas as pd
+import plotly.express as px
 
 
-def style_negative(v, props=''):
-    return props if v < 0 else None
+
+def get_chart(df: pd.DataFrame, x_values:str, y_values:str, title:str, labels=None):
+    fig = px.line(df, x=x_values, y=y_values,
+                        color='year', title=title,
+                        color_discrete_sequence=px.colors.qualitative.G10,
+                        labels=labels)
+    
+    fig.update_layout(hovermode="x unified", width=1000, height=600, plot_bgcolor='white', 
+                      xaxis=dict(gridcolor='#FFFFFF',tickformat="%b %d", linecolor='rgb(204, 204, 204)',
+                                 linewidth=1, ticks='outside', tickfont=dict(size=12)),
+                      yaxis=dict(gridcolor='#F8F8F8', tickfont=dict(size=12)))
+    return fig
