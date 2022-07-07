@@ -10,7 +10,7 @@ def get_chart(df: pd.DataFrame, x_values:str, y_values:str, title:str, color=Non
                         labels=labels)
     
     fig.update_layout(hovermode="x unified", width=1000, height=600, plot_bgcolor='white', 
-                      xaxis=dict(gridcolor='#FFFFFF',tickformat="%b %d", linecolor='rgb(204, 204, 204)',
+                      xaxis=dict(gridcolor='#FFFFFF',tickformat="%b %Y", linecolor='rgb(204, 204, 204)',
                                  linewidth=1, ticks='outside', tickfont=dict(size=12)),
                       yaxis=dict(gridcolor='#F8F8F8', tickfont=dict(size=12)))
     return fig
