@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-from quickstart import credentials
+from quickstart import credentials, download_dataframe
 
 st.set_page_config(page_title="Cash Prices", layout='wide',)
 
@@ -16,6 +16,9 @@ def russia_cash_prices():
 def main():
     russia_cash_prices()
     creds = credentials()
+    add_country='russia'
+    df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country}.csv', parse_dates=['TRADEDATE'])
+    print(df)
 
 
 if __name__ == '__main__':

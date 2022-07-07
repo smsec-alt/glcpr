@@ -1,4 +1,3 @@
-import logging
 import streamlit as st
 from quickstart import credentials, download_dataframe
 from resources import get_chart
