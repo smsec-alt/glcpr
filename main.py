@@ -1,4 +1,8 @@
 import pandas as pd
+import streamlit as st
+from quickstart import credentials
+
+st.set_page_config(page_title="Cash Prices", layout='wide',)
 
 
 def russia_cash_prices():
@@ -11,6 +15,7 @@ def russia_cash_prices():
 
 def main():
     russia_cash_prices()
+    creds = credentials()
 
 
 if __name__ == '__main__':
