@@ -6,7 +6,7 @@ from resources import get_chart
 
 logging.getLogger('googleapicliet.discovery_cache').setLevel(logging.ERROR)
 st.set_page_config(page_title="Cash Prices", layout='wide',)
-# creds = credentials()
+creds = credentials()
 
 with st.sidebar:
     add_country = st.selectbox("Choose a Country", ('Russia', 'Australia', 'Argentina', 'Canada'))
