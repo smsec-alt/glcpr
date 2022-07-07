@@ -11,7 +11,7 @@ def main():
     with st.sidebar:
         add_country = st.selectbox("Choose a Country", ('Russia', 'Australia', 'Argentina', 'Canada'))
         df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country.lower()}.csv', parse_dates=['TRADEDATE'])
-        add_category = st.selectbox("Choose a Category", tuple(df['NAME'].unique()))
+        add_category = st.multiselect("Choose a Category", list(df['NAME'].unique()))
         
     st.plotly_chart(get_chart(df.query('NAME==@add_category'), 'TRADEDATE', 'CLOSE', f'{add_country} - Cash Prices'))
 

@@ -48,9 +48,12 @@ def canada_cash_prices():
     table = table[['TRADEDATE', 'CLOSE', 'NAME']]
     table = table.dropna()
     table = table.sort_values(by=['NAME', 'TRADEDATE'])
-    # table['NAME'] = table['NAME'].str.replace('1','')
-    # table['NAME'] = table['NAME'].str.replace('2','')
-    # table['NAME'] = table['NAME'].str.replace('3','')
+    table['NAME'] = table['NAME'].replace('Barley1 CW', 'BarleyFeed')
+    table['NAME'] = table['NAME'].replace('BarleyFeed', 'Barley Feed')
+    table['NAME'] = table['NAME'].str.replace('1','')
+    table['NAME'] = table['NAME'].str.replace('2','')
+    table['NAME'] = table['NAME'].str.replace('3','')
+    table = table.query('NAME != "Wheat CW"')
     table.to_csv(r'G:\My Drive\cash_prices\cash_prices_canada.csv', index=None)
 
 
