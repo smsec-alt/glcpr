@@ -114,15 +114,10 @@ def print_filenames(creds: Credentials, pageSize: int=10) -> None:
 
 def main():
     creds = credentials()
-    # print(creds)
     all_files = search_file(creds, "name contains 'Russia_1017327'")
-    # for file in all_files:
-    #     print(file['id'], file['name'])
-    # download_dataframe(creds=creds, id=file['id'])
     region = '1017327'
     for w in ['daily-precipitation', 'max-temperature', 'min-temperature', 'average-temperature']:
         print(download_dataframe(creds=creds, filename=f"Russia_{region}_{w}.csv", parse_dates=['time']))
-    # upload_file(creds=creds, filename='123.csv')
 
 
 if __name__ == '__main__':
