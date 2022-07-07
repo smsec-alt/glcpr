@@ -13,7 +13,7 @@ def main():
         df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country.lower()}.csv', parse_dates=['TRADEDATE'])
         add_category = st.selectbox("Choose a Category", tuple(df['NAME'].unique()))
         
-    st.plotly_chart(get_chart(df, 'TRADEDATE', 'CLOSE', f'{add_country} - Cash Prices'))
+    st.plotly_chart(get_chart(df.query('NAME==@add_category'), 'TRADEDATE', 'CLOSE', f'{add_country} - Cash Prices'))
 
     
 if __name__ == '__main__':
