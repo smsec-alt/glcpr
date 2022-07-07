@@ -8,3 +8,4 @@ protobuf==3.19.4
 requests==2.28.0
 streamlit==1.10.0
 openpyxl==3.0.10
+SQLAlchemy==1.4.39
