@@ -13,9 +13,10 @@ with st.sidebar:
 
 
 def main():   
-    df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country}.csv', parse_dates=['TRADEDATE'])
+    # df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country}.csv', parse_dates=['TRADEDATE'])
     # st.write(df)
-    st.plotly_chart(get_chart(df, 'TRADEDATE', 'CLOSE', f'{add_country} - Cash Prices'))
+    # st.plotly_chart(get_chart(df, 'TRADEDATE', 'CLOSE', f'{add_country} - Cash Prices'))
+    st.write('123')
     
 if __name__ == '__main__':
     main()
