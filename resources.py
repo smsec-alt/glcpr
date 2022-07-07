@@ -1,9 +1,12 @@
+import numpy as np
 import pandas as pd
 import plotly.express as px
 
 
 
-def get_chart(df: pd.DataFrame, x_values:str, y_values:str, title:str, color=None, labels=None):
+def get_chart(df: pd.DataFrame, x_values:str, y_values:str, title:str, color=None, labels=None, logs=False):
+    if logs:
+        df[y_values] = np.log(df[y_values])
     fig = px.line(df, x=x_values, y=y_values,
                         color=color, title=title,
                         color_discrete_sequence=px.colors.qualitative.G10,
