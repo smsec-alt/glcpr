@@ -6,13 +6,13 @@ from resources import get_chart
 st.set_page_config(page_title="Cash Prices", layout='wide',)
 creds = credentials()
 
-with st.sidebar:
-    add_country = st.selectbox("Choose a Country", ('Russia', 'Australia', 'Argentina', 'Canada'))
-
 
 def main():   
-    add_country = 'Russia'
-    df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country.lower()}.csv', parse_dates=['TRADEDATE'])
+    with st.sidebar:
+        add_country = st.selectbox("Choose a Country", ('Russia', 'Australia', 'Argentina', 'Canada'))
+        df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country.lower()}.csv', parse_dates=['TRADEDATE'])
+        add_category = st.selectbox("Choose a Category", tuple(df['NAME'].unique()))
+        
     st.plotly_chart(get_chart(df, 'TRADEDATE', 'CLOSE', f'{add_country} - Cash Prices'))
 
     
