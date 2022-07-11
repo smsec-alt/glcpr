@@ -26,8 +26,9 @@ def main():
         start = col1.date_input("Start Date", min_start_wwht, min_value=min_start_wwht, max_value=max_start_wwht)
         end = col2.date_input("End Date", max_start_wwht, min_value=min_start_wwht, max_value=max_start_wwht)
                         
-    for cat in add_category:
-        st.plotly_chart(get_chart(df.query('NAME==@cat & TRADEDATE>=@start & TRADEDATE<=@end'), 'TRADEDATE', 'CLOSE', f'{add_country} - {cat} Cash Prices', logs=add_logs))
+    # for cat in add_category:
+    #     st.plotly_chart(get_chart(df.query('NAME==@cat & TRADEDATE>=@start & TRADEDATE<=@end'), 'TRADEDATE', 'CLOSE', f'{add_country} - {cat} Cash Prices', logs=add_logs))
+    st.plotly_chart(get_chart(df.query('NAME==@cat & TRADEDATE>=@start & TRADEDATE<=@end'), 'TRADEDATE', 'CLOSE', f'{add_country} - {add_category} Cash Prices', logs=add_logs))
 
 # np.log2(data['Salary'])
     
