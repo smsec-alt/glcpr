@@ -11,16 +11,17 @@ def main():
     with st.sidebar:
         add_country = st.selectbox("Choose a Country", ('Russia', 'Australia', 'Argentina', 'Canada'))
         df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country.lower()}.csv', parse_dates=['TRADEDATE'])
+        all_categories = tuple(df['NAME'].unique())
         min_start_wwht, max_start_wwht = df['TRADEDATE'].min(), df['TRADEDATE'].max()
                
-        if len(list(df['NAME'].unique())) > 1:
+        if len(all_categories) > 1:
             add_2legs = st.checkbox('Include 2 Legs')
             if add_2legs:
                 col11, col21 = st.columns(2)
-                leg1 = col11.selectbox("Choose a Category", tuple(df['NAME'].unique()))
-                leg2 = col21.selectbox("Choose a Category", tuple(df['NAME'].unique()))
+                leg1 = col11.selectbox("Leg 1", all_categories)
+                leg2 = col21.selectbox("Leg 2", all_categories)
             else:
-                add_category = st.selectbox("Choose a Category", tuple(df['NAME'].unique()))
+                add_category = st.selectbox("Choose a Category", all_categories)
                 # add_category = df['NAME'].unique().values[0]
                 add_logs = st.checkbox('Include Logs')
         col1, col2 = st.columns(2)
