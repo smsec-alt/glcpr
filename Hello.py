@@ -16,7 +16,7 @@ def main():
         if len(list(df['NAME'].unique())) > 1:
             add_2legs = st.checkbox('Include 2 Legs')
             if add_2legs:
-                col1, col2 = st.columns(2)
+                col11, col21 = st.columns(2)
                 leg1 = col1.selectbox("Choose a Category", tuple(df['NAME'].unique()))
                 leg2 = col2.selectbox("Choose a Category", tuple(df['NAME'].unique()))
             else:
