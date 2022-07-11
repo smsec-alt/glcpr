@@ -20,8 +20,8 @@ def main():
                 leg1 = col1.selectbox("Choose a Category", tuple(df['NAME'].unique()))
                 leg2 = col2.selectbox("Choose a Category", tuple(df['NAME'].unique()))
             else:
-                # add_category = st.selectbox("Choose a Category", tuple(df['NAME'].unique()))
-                add_category = df['NAME'].unique().values[0]
+                add_category = st.selectbox("Choose a Category", tuple(df['NAME'].unique()))
+                # add_category = df['NAME'].unique().values[0]
                 add_logs = st.checkbox('Include Logs')
         col1, col2 = st.columns(2)
         start = col1.date_input("Start Date", min_start_wwht, min_value=min_start_wwht, max_value=max_start_wwht)
