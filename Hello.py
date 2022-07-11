@@ -28,7 +28,7 @@ def main():
                         
     # for cat in add_category:
     #     st.plotly_chart(get_chart(df.query('NAME==@cat & TRADEDATE>=@start & TRADEDATE<=@end'), 'TRADEDATE', 'CLOSE', f'{add_country} - {cat} Cash Prices', logs=add_logs))
-    st.plotly_chart(get_chart(df.query('NAME==@cat & TRADEDATE>=@start & TRADEDATE<=@end'), 'TRADEDATE', 'CLOSE', f'{add_country} - {add_category} Cash Prices', logs=add_logs))
+    # st.plotly_chart(get_chart(df.query('NAME==@cat & TRADEDATE>=@start & TRADEDATE<=@end'), 'TRADEDATE', 'CLOSE', f'{add_country} - {add_category} Cash Prices', logs=add_logs))
 
 # np.log2(data['Salary'])
     
