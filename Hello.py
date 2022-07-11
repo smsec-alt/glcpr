@@ -34,7 +34,7 @@ def main():
                         
     # for cat in add_category:
     #     st.plotly_chart(get_chart(df.query('NAME==@cat & TRADEDATE>=@start & TRADEDATE<=@end'), 'TRADEDATE', 'CLOSE', f'{add_country} - {cat} Cash Prices', logs=add_logs))
-    if len(all_categories) > 1:
+    if (len(all_categories) > 1) and (add_2legs):
         subdf = df.query('TRADEDATE>=@start & TRADEDATE<=@end')
         # st.plotly_chart(get_chart(subdf, 'TRADEDATE', 'CLOSE', f'{add_country} - {add_category} Cash Prices', logs=add_logs))
         
