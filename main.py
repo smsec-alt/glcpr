@@ -1,3 +1,4 @@
+import numpy as np
 import requests
 import pandas as pd
 import streamlit as st
@@ -65,10 +66,38 @@ def russia_cash_prices():
     df_cpt['NAME'] = 'WHCPT'
     df_cpt.to_csv(r'G:\My Drive\cash_prices\cash_prices_russia.csv', index=None)
 
+
+def argy_cash_prices():
+    def argy_process_page(page_number: int):
+        try:
+            print(page_number)
+            table = pd.read_html(f'https://www.bcr.com.ar/es/mercados/mercado-de-granos/cotizaciones/cotizaciones-locales/mercado-fisico-de-rosario/precios-{page_number}')[0]
+            table.columns = table.iloc[1,:]
+            table = table.iloc[2:,:]
+            current_date = table.columns[-1]
+            table.columns = ['location', 'delivery_date']+list(table.columns[2:-2])+['quality', 'prices']
+            table = table.dropna(subset=['location'])
+            table['grain'] = np.where(table[table.columns[4]].isna(), table['location'], np.nan)
+            table['grain'] = table['grain'].ffill()
+            table = table[table.columns[table.columns.isna()==False]]
+            table = table.dropna()
+            table['prices'] = table['prices'].apply(lambda x: x.replace(' ','').replace('u$s',''))
+            table['prices'] = pd.to_numeric(table['prices'], errors='coerce')
+            table = table.dropna(subset='prices')
+            table['date'] = current_date
+            table['page'] = page_number
+            table = table[['location', 'delivery_date', 'quality', 'prices', 'grain', 'date', 'page']]
+            return table
+        except:
+            return None
+    table = pd.concat([argy_process_page(page) for page in range(1,3300)])
+    table.to_csv(r'G:\My Drive\cash_prices\cash_prices_argentina.csv', index=None)
+    
+
 def main():
     russia_cash_prices()
     canada_cash_prices()
-
+    # argy_cash_prices()
 
 if __name__ == '__main__':
     main()
