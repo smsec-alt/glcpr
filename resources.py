@@ -11,7 +11,6 @@ def get_chart(df: pd.DataFrame, x_values:str, y_values:str, title:str, color=Non
                         color=color, title=title,
                         color_discrete_sequence=px.colors.qualitative.G10,
                         labels=labels)
-    # "%b %d"
     fig.update_layout(hovermode="x unified", width=1000, height=600, plot_bgcolor='white', 
                       xaxis=dict(gridcolor='#FFFFFF',tickformat="%d %b %Y", linecolor='rgb(204, 204, 204)',
                                  linewidth=1, ticks='outside', tickfont=dict(size=12)),
