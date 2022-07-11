@@ -46,7 +46,7 @@ def main():
             df_all['Result'] = df_all[leg1] - df_all[leg2]
         else:
             df_all['Result'] = df_all[leg1] / df_all[leg2]
-        st.plotly_chart(get_chart(df_all, 'TRADEDATE', 'Result', f'{add_country} - {leg1}-{leg2} {add_category} Cash Prices'))
+        st.plotly_chart(get_chart(df_all, 'TRADEDATE', 'Result', f'{add_country} - {leg1}-{leg2} {add_operation} Cash Prices'))
         
     else:    
         subdf = df.query('NAME==@add_category & TRADEDATE>=@start & TRADEDATE<=@end')
