@@ -20,6 +20,7 @@ def main():
                 col11, col21 = st.columns(2)
                 leg1 = col11.selectbox("Leg 1", all_categories)
                 leg2 = col21.selectbox("Leg 2", all_categories)
+                add_operation = st.selectbox("Select a function", ('Spread', 'Ratio'))
             else:
                 add_category = st.selectbox("Choose a Category", all_categories)
                 # add_category = df['NAME'].unique().values[0]
