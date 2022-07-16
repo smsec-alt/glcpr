@@ -9,7 +9,7 @@ creds = credentials()
 
 def main():   
     with st.sidebar:
-        add_country = st.selectbox("Choose a Country", ('Russia', 'Australia', 'Argentina', 'Canada'))
+        add_country = st.selectbox("Choose a Region", ('Canada', 'Russia', 'Europe','Australia', 'Argentina'))
         df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country.lower()}.csv', parse_dates=['TRADEDATE'])
         all_categories = tuple(df['NAME'].unique())
         min_start_wwht, max_start_wwht = df['TRADEDATE'].min(), df['TRADEDATE'].max()
@@ -23,7 +23,6 @@ def main():
                 add_operation = st.selectbox("Select a function", ('Spread', 'Ratio'))
             else:
                 add_category = st.selectbox("Choose a Category", all_categories)
-                # add_category = df['NAME'].unique().values[0]
                 add_logs = st.checkbox('Include Logs')
         else:
             add_category = all_categories[0]
@@ -32,11 +31,8 @@ def main():
         start = col1.date_input("Start Date", min_start_wwht, min_value=min_start_wwht, max_value=max_start_wwht)
         end = col2.date_input("End Date", max_start_wwht, min_value=min_start_wwht, max_value=max_start_wwht)
                         
-    # for cat in add_category:
-    #     st.plotly_chart(get_chart(df.query('NAME==@cat & TRADEDATE>=@start & TRADEDATE<=@end'), 'TRADEDATE', 'CLOSE', f'{add_country} - {cat} Cash Prices', logs=add_logs))
     if (len(all_categories) > 1) and (add_2legs):
         subdf = df.query('TRADEDATE>=@start & TRADEDATE<=@end')
-        # st.plotly_chart(get_chart(subdf, 'TRADEDATE', 'CLOSE', f'{add_country} - {add_category} Cash Prices', logs=add_logs))
         
         df_cat1, df_cat2 = subdf.query('NAME == @leg1'), subdf.query('NAME == @leg2')
         df_cat1.rename({'CLOSE': leg1}, axis=1, inplace=True)
@@ -52,7 +48,6 @@ def main():
         subdf = df.query('NAME==@add_category & TRADEDATE>=@start & TRADEDATE<=@end')
         st.plotly_chart(get_chart(subdf, 'TRADEDATE', 'CLOSE', f'{add_country} -- {add_category} Cash Prices', logs=add_logs))
 
-# np.log2(data['Salary'])
     
 if __name__ == '__main__':
     main()
