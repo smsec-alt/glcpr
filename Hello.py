@@ -11,6 +11,9 @@ def main():
     with st.sidebar:
         add_country = st.selectbox("Choose a Region", ('Canada', 'Russia', 'Europe','Australia', 'Argentina'))
         df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country.lower()}.csv', parse_dates=['TRADEDATE'])
+        if add_country == 'Europe':
+            add_state = st.selectbox("Choose a State", tuple(df['STATE'].unique()))
+            df = df.query('STATE==@add_state')
         all_categories = tuple(df['NAME'].unique())
         min_start_wwht, max_start_wwht = df['TRADEDATE'].min(), df['TRADEDATE'].max()
                
