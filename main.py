@@ -9,7 +9,7 @@ from quickstart import credentials, download_dataframe
 st.set_page_config(page_title="Cash Prices", layout='wide',)
 
 
-def eu_get_prices():
+def eu_cash_prices():
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
     }
@@ -128,6 +128,7 @@ def argy_cash_prices():
 def main():
     russia_cash_prices()
     canada_cash_prices()
+    eu_cash_prices()
     # argy_cash_prices()
 
 if __name__ == '__main__':
