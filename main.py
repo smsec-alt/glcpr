@@ -1,12 +1,43 @@
 import numpy as np
 import requests
 import pandas as pd
+import zipfile, io
 import streamlit as st
 from datetime import datetime
 from quickstart import credentials, download_dataframe
 
 st.set_page_config(page_title="Cash Prices", layout='wide',)
 
+
+def eu_get_prices():
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
+    }
+    response = requests.get('https://agridata.ec.europa.eu/Qlik_Downloads/Cereals%20Prices.zip', headers=headers)
+    zip_file = zipfile.ZipFile(io.BytesIO(response.content))
+
+    dfs = {text_file.filename: pd.read_csv(zip_file.open(text_file.filename), low_memory=False, parse_dates=['Week - End Date'])
+           for text_file in zip_file.infolist()
+           if 'Metadata' not in text_file.filename}
+    df = dfs[list(filter(lambda x: 'Metadata' not in x, dfs.keys()))[0]]
+    ##only domestic prices
+    df = df[df['Product Stage Name']!='Free On Board - Incoterm']
+    #dropping useless columns
+    df = df.drop(['Sector Code', 'Weight Unit Name', 'Week - Begin Date',  'Product Group Name', 'Product Stage Name'], axis=1)
+    df['EU Price'] = df['EU Price'].str.replace('€', '')
+    df['EU Price'] = pd.to_numeric(df['EU Price'], errors='coerce')
+    #removing duplicates in regions
+    df = df[df['Market Name']!='La Pallice']
+    #removing small regions
+    df = df[df['Member State Code'].isin(['CY', 'UK', 'EL', 'AT'])==False]
+    #include only regions with ly data
+    df['temp'] = df['Member State Code']+df['Product Name']+df['Market Name']
+    df = df[df['temp'].isin(df[df['Week - End Date'].dt.year == pd.to_datetime("today").year]['temp'].unique())]
+    df = df.drop(['temp'], axis=1)
+    #summary
+    df = df.groupby(['Member State Code', 'Product Name', 'Week - End Date'], as_index=False).mean()
+    df.columns = ['STATE', 'NAME', 'TRADEDATE', 'CLOSE']
+    df.to_csv(r'G:\My Drive\cash_prices\cash_prices_europe.csv', index=None)
 
 
 def canada_cash_prices():
