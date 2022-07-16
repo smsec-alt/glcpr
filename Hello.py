@@ -10,10 +10,12 @@ creds = credentials()
 def main():   
     with st.sidebar:
         add_country = st.selectbox("Choose a Region", ('Canada', 'Russia', 'Europe','Australia', 'Argentina'))
-        df = download_dataframe(creds=creds, filename=f'cash_prices_{add_country.lower()}.csv', parse_dates=['TRADEDATE'])
+        country_name=add_country
+        df = download_dataframe(creds=creds, filename=f'cash_prices_{country_name.lower()}.csv', parse_dates=['TRADEDATE'])
         if add_country == 'Europe':
             add_state = st.selectbox("Choose a State", tuple(df['STATE'].unique()))
-            df = df.query('STATE==@add_state')
+            country_name=add_state
+            df = df.query('STATE==@country_name')
         all_categories = tuple(df['NAME'].unique())
         min_start_wwht, max_start_wwht = df['TRADEDATE'].min(), df['TRADEDATE'].max()
                
@@ -45,11 +47,11 @@ def main():
             df_all['Result'] = df_all[leg1] - df_all[leg2]
         else:
             df_all['Result'] = df_all[leg1] / df_all[leg2]
-        st.plotly_chart(get_chart(df_all, 'TRADEDATE', 'Result', f'{add_country} -- {leg1}-{leg2} Cash Prices {add_operation}'))
+        st.plotly_chart(get_chart(df_all, 'TRADEDATE', 'Result', f'{country_name} -- {leg1}-{leg2} Cash Prices {add_operation}'))
         
     else:    
         subdf = df.query('NAME==@add_category & TRADEDATE>=@start & TRADEDATE<=@end')
-        st.plotly_chart(get_chart(subdf, 'TRADEDATE', 'CLOSE', f'{add_country} -- {add_category} Cash Prices', logs=add_logs))
+        st.plotly_chart(get_chart(subdf, 'TRADEDATE', 'CLOSE', f'{country_name} -- {add_category} Cash Prices', logs=add_logs))
 
     
 if __name__ == '__main__':
