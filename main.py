@@ -9,7 +9,30 @@ from quickstart import credentials, download_dataframe
 st.set_page_config(page_title="Cash Prices", layout='wide',)
 
 
+
+
 def eu_cash_prices():
+    
+    eu_reg_dict = {
+    'BG': 'Bulgaria', 
+    'CZ': 'Czechia',
+    'DE': 'Germany',
+    'ES': 'Spain',
+    'FI': 'Finland',
+    'FR':'France',
+    'HR':'Croatia',
+    'HU': 'Hungary',
+    'IE': 'Ireland',
+    'IT': 'Italy',
+    'LT': 'Lithuania',
+    'NL': 'Netherlands',
+    'PL': 'Poland',
+    'PT': 'Portugal',
+    'RO': 'Romania',
+    'SI': 'Slovenia',
+    'SK': 'Slovakia',
+    }
+    
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
     }
@@ -29,7 +52,7 @@ def eu_cash_prices():
     #removing duplicates in regions
     df = df[df['Market Name']!='La Pallice']
     #removing small regions
-    df = df[df['Member State Code'].isin(['CY', 'UK', 'EL', 'AT'])==False]
+    df = df[df['Member State Code'].isin(['CY', 'UK', 'EL', 'AT', 'BE'])==False]
     #include only regions with ly data
     df['temp'] = df['Member State Code']+df['Product Name']+df['Market Name']
     df = df[df['temp'].isin(df[df['Week - End Date'].dt.year == pd.to_datetime("today").year]['temp'].unique())]
@@ -37,6 +60,7 @@ def eu_cash_prices():
     #summary
     df = df.groupby(['Member State Code', 'Product Name', 'Week - End Date'], as_index=False).mean()
     df.columns = ['STATE', 'NAME', 'TRADEDATE', 'CLOSE']
+    df['STATE'] = df['STATE'].replace(eu_reg_dict)
     df.to_csv(r'G:\My Drive\cash_prices\cash_prices_europe.csv', index=None)
 
 
