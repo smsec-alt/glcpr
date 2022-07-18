@@ -52,13 +52,15 @@ def main():
             df_all['Result'] = df_all[leg1] - df_all[leg2]
         else:
             df_all['Result'] = df_all[leg1] / df_all[leg2]
-        st.plotly_chart(get_chart(df_all, 'TRADEDATE', 'Result', f'{country_name} -- {leg1}-{leg2} Cash Prices {add_operation}'))
+        st.plotly_chart(get_chart(df_all, 'TRADEDATE', 'Result', f'{country_name} -- {leg1}-{leg2} Cash Prices {add_operation}',
+                                  labels={'Result':add_operation, 'DATE':'', 'YEAR':'Year'}))
         st.plotly_chart(get_seasonality_chart(df_all, 'TRADEDATE', 'Result', f'{country_name} -- {leg1}-{leg2} Cash Prices {add_operation} Seasonality',
                                               labels={'Result':add_operation, 'DATE':'', 'YEAR':'Year'}))
         
     else:    
         subdf = df.query('NAME==@add_category & TRADEDATE>=@start & TRADEDATE<=@end')
-        st.plotly_chart(get_chart(subdf, 'TRADEDATE', 'CLOSE', f'{country_name} -- {add_category} Cash Prices', logs=add_logs))
+        st.plotly_chart(get_chart(subdf, 'TRADEDATE', 'CLOSE', f'{country_name} -- {add_category} Cash Prices', logs=add_logs,
+                                  labels={'CLOSE':add_category, 'TRADEDATE':'', 'YEAR':'Year'}))
         st.plotly_chart(get_seasonality_chart(subdf, 'TRADEDATE', 'CLOSE', f'{country_name} -- {add_category} Cash Prices Seasonality',
                                               labels={'CLOSE':add_category, 'TRADEDATE':'', 'YEAR':'Year'}))
 # 

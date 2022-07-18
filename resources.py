@@ -12,7 +12,9 @@ def get_chart(df: pd.DataFrame, x_values:str, y_values:str, title:str, color=Non
                         color=color, title=title,
                         color_discrete_sequence=px.colors.qualitative.G10,
                         labels=labels)
-    fig.update_layout(hovermode="x unified", width=1000, height=600, plot_bgcolor='white', 
+    fig.update_layout(hovermode="x unified",
+                    #   width=1000, height=600,
+                      plot_bgcolor='white', 
                       xaxis=dict(gridcolor='#FFFFFF',tickformat="%d %b %Y", linecolor='rgb(204, 204, 204)',
                                  linewidth=1, ticks='outside', tickfont=dict(size=12)),
                       yaxis=dict(gridcolor='#F8F8F8', tickfont=dict(size=12)))
@@ -78,9 +80,9 @@ def get_seasonality_chart(df: pd.DataFrame, x_values:str, y_values:str, title:st
                 ),
             ), font=dict(color='rgb(82, 82, 82)', family='Arial'),
             autosize=False,
-            width=1300,
+            # width=1300,
             title=title,
-            height=500,
+            # height=500,
             showlegend=True,
             plot_bgcolor='white',
             hovermode='x unified',
