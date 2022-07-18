@@ -53,7 +53,7 @@ def main():
         else:
             df_all['Result'] = df_all[leg1] / df_all[leg2]
         st.plotly_chart(get_chart(df_all, 'TRADEDATE', 'Result', f'{country_name} -- {leg1}-{leg2} Cash Prices {add_operation}',
-                                  labels={'Result':add_operation, 'DATE':'', 'YEAR':'Year'}))
+                                  labels={'Result':add_operation, 'TRADEDATE':''}))
         st.plotly_chart(get_seasonality_chart(df_all, 'TRADEDATE', 'Result', f'{country_name} -- {leg1}-{leg2} Cash Prices {add_operation} Seasonality',
                                               labels={'Result':add_operation, 'DATE':'', 'YEAR':'Year'}))
         
