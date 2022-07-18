@@ -35,6 +35,8 @@ def main():
         col1, col2 = st.columns(2)
         start = col1.date_input("Start Date", min_start_wwht, min_value=min_start_wwht, max_value=max_start_wwht)
         end = col2.date_input("End Date", max_start_wwht, min_value=min_start_wwht, max_value=max_start_wwht)
+        if add_country == 'Europe':
+            add_metadata = st.checkbox('Show Metadata')
                         
     if (len(all_categories) > 1) and (add_2legs):
         subdf = df.query('TRADEDATE>=@start & TRADEDATE<=@end')
