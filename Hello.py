@@ -59,7 +59,8 @@ def main():
         st.plotly_chart(get_chart(subdf, 'TRADEDATE', 'CLOSE', f'{country_name} -- {add_category} Cash Prices', logs=add_logs))
 
     if (add_country == 'Europe') and (add_metadata):
-        df_metadata = pd.read(f'./metadata/metadata_{add_country.lower()}.csv')
+        st.markdown('### Metadata')     
+        df_metadata = pd.read_csv(f'./metadata/metadata_{add_country.lower()}.csv')
         st.write(df_metadata.query('STATE==@country_name'))
     
 if __name__ == '__main__':
