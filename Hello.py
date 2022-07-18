@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 from quickstart import credentials, download_dataframe
-from resources import get_chart
+from resources import get_chart, get_seasonality_chart
 
 
 st.set_page_config(page_title="Cash Prices", layout='wide',)
@@ -10,7 +10,7 @@ creds = credentials()
 
 def main():   
     with st.sidebar:
-        add_country = st.selectbox("Choose a Region", ('Canada', 'Russia', 'Europe','Australia', 'Argentina'))
+        add_country = st.selectbox("Choose a Region", ('Canada', 'Russia', 'Europe', 'Argentina', 'Australia'))
         country_name=add_country
         df = download_dataframe(creds=creds, filename=f'cash_prices_{country_name.lower()}.csv', parse_dates=['TRADEDATE'])
         if add_country == 'Europe':
@@ -53,11 +53,13 @@ def main():
         else:
             df_all['Result'] = df_all[leg1] / df_all[leg2]
         st.plotly_chart(get_chart(df_all, 'TRADEDATE', 'Result', f'{country_name} -- {leg1}-{leg2} Cash Prices {add_operation}'))
+        st.plotly_chart(get_seasonality_chart(df_all, 'TRADEDATE', 'Result', f'{country_name} -- {leg1}-{leg2} Cash Prices {add_operation} Seasonality'))
         
     else:    
         subdf = df.query('NAME==@add_category & TRADEDATE>=@start & TRADEDATE<=@end')
         st.plotly_chart(get_chart(subdf, 'TRADEDATE', 'CLOSE', f'{country_name} -- {add_category} Cash Prices', logs=add_logs))
-
+        st.plotly_chart(get_seasonality_chart(subdf, 'TRADEDATE', 'CLOSE', f'{country_name} -- {add_category} Cash Prices Seasonality'))
+# labels={y_values:'', 'DATE':'', 'YEAR':'Year'})
     if (add_country == 'Europe') and (add_metadata):
         st.markdown('### Metadata')     
         df_metadata = pd.read_csv(f'./metadata/metadata_{add_country.lower()}.csv')
