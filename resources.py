@@ -49,7 +49,7 @@ def get_seasonality_chart(df: pd.DataFrame, x_values:str, y_values:str, title:st
                                 fill=None, name=str(current_year-1), mode='lines',
                                 line=dict(color='#000000')))
     fig.add_trace(go.Scatter(x=df[df['YEAR']==current_year]['DATE'],
-                                y=df[df['YEAR']==current_year][y_values], mode='markers',
+                                y=df[df['YEAR']==current_year][y_values], mode='lines+markers',
                                 fill=None, name=str(current_year),
                                 line=dict(color='firebrick')))
 
