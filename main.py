@@ -1,14 +1,15 @@
-import numpy as np
+# import datetime
 import requests
+import numpy as np
 import pandas as pd
 import zipfile, io
 import streamlit as st
 from datetime import datetime
 from quickstart import credentials, download_dataframe
+pd.options.mode.chained_assignment = None
+
 
 st.set_page_config(page_title="Cash Prices", layout='wide',)
-
-
 
 
 def eu_cash_prices():
@@ -122,7 +123,7 @@ def russia_cash_prices():
     df_cpt.to_csv(r'G:\My Drive\cash_prices\cash_prices_russia.csv', index=None)
 
 
-def argy_cash_prices():
+def retrieve_argy_cash_prices(min_page: int):
     def argy_process_page(page_number: int):
         try:
             print(page_number)
@@ -145,7 +146,61 @@ def argy_cash_prices():
             return table
         except:
             return None
-    table = pd.concat([argy_process_page(page) for page in range(1,3300)])
+    table = pd.concat([argy_process_page(page) for page in range(min_page, 3250)])
+    return table
+    
+    
+def argy_cash_prices():
+    months_dict = {
+        'abril':4,
+        'agosto':8,
+        'diciembre':12,
+        'enero':1,
+        'febrero':2,
+        'julio':7,
+        'junio':6,
+        'marzo':3,
+        'mayo':5,
+        'noviembre':11,
+        'octubre':10,
+        'septiembre':9}
+    table_old = pd.read_csv(r'G:\My Drive\cash_prices\cash_prices_argentina_raw.csv')
+    last_page = table_old['page'].max()+1
+
+    try:
+        table_new = retrieve_argy_cash_prices(last_page)
+        table = pd.concat([table_old, table_new])
+    except ValueError:
+        table = table_old
+    table.to_csv(r'G:\My Drive\cash_prices\cash_prices_argentina_raw.csv', index=None)
+    # dates_list=table['date'][table['date'].str.contains(' de')].str.split()
+    # dates_processed={}
+    # for date in dates_list:
+    #     if (date==date) and (len(date)==6):
+    #         day = date[-5].lower().replace('°','')
+    #         month = months_dict[date[-3].lower()]
+    #         year = date[-1].lower()
+    #         # dates_processed[' '.join(date)] = datetime(int(year), month, int(day))
+    #         dates_processed[' '.join(date)] = f"{day}/{month}/{year}"
+    #     else:
+    #         dates_processed[' '.join(date)] = np.nan
+    # table['date'] = table['date'].replace(dates_processed)
+
+    table['grain'][table['grain'].str.contains('Corn')] = 'Corn'
+    table['grain'][table['grain'].str.contains('Wheat')] = 'Wheat'
+    table['grain'][table['grain'].str.contains('wheat')] = 'Wheat'
+    table['grain'][table['grain'].str.contains('Barley')] = 'Barley'
+    table['grain'][table['grain'].str.contains('Sunflower')] = 'Sunflower'
+    table['grain'][table['grain'].str.contains('Soy')] = 'Soya'
+    table = table[table['grain'].isin(['Corn', 'Wheat', 'Barley', 'Sunflower', 'Soya'])]
+    table = table[table['delivery_date'].str.contains('Desc')]
+    table['date'] = pd.to_datetime(table['date'], errors='coerce', format="%d/%m/%Y")
+    table['prices'] = pd.to_numeric(table['prices'], errors='coerce')
+    table = table.dropna()
+    table = table[table['prices']>50]
+    table = table.groupby(['date', 'grain'], as_index=False)['prices'].mean()
+    table.columns = ['TRADEDATE', 'NAME', 'CLOSE']
+    table = table[table['NAME']!='Soya']
     table.to_csv(r'G:\My Drive\cash_prices\cash_prices_argentina.csv', index=None)
     
 
@@ -153,7 +208,7 @@ def main():
     russia_cash_prices()
     canada_cash_prices()
     eu_cash_prices()
-    # argy_cash_prices()
+    argy_cash_prices()
 
 if __name__ == '__main__':
     main()
