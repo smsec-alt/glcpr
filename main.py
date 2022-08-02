@@ -1,11 +1,9 @@
-# import datetime
 import requests
 import numpy as np
 import pandas as pd
 import zipfile, io
 import streamlit as st
 from datetime import datetime
-from quickstart import credentials, download_dataframe
 pd.options.mode.chained_assignment = None
 
 
@@ -146,7 +144,7 @@ def retrieve_argy_cash_prices(min_page: int):
             return table
         except:
             return None
-    table = pd.concat([argy_process_page(page) for page in range(min_page, 3250)])
+    table = pd.concat([argy_process_page(page) for page in range(min_page, 3220)])
     return table
     
     
@@ -173,18 +171,6 @@ def argy_cash_prices():
     except ValueError:
         table = table_old
     table.to_csv(r'G:\My Drive\cash_prices\cash_prices_argentina_raw.csv', index=None)
-    # dates_list=table['date'][table['date'].str.contains(' de')].str.split()
-    # dates_processed={}
-    # for date in dates_list:
-    #     if (date==date) and (len(date)==6):
-    #         day = date[-5].lower().replace('°','')
-    #         month = months_dict[date[-3].lower()]
-    #         year = date[-1].lower()
-    #         # dates_processed[' '.join(date)] = datetime(int(year), month, int(day))
-    #         dates_processed[' '.join(date)] = f"{day}/{month}/{year}"
-    #     else:
-    #         dates_processed[' '.join(date)] = np.nan
-    # table['date'] = table['date'].replace(dates_processed)
 
     table['grain'][table['grain'].str.contains('Corn')] = 'Corn'
     table['grain'][table['grain'].str.contains('Wheat')] = 'Wheat'
