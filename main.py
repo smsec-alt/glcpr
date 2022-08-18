@@ -144,7 +144,7 @@ def retrieve_argy_cash_prices(min_page: int):
             return table
         except:
             return None
-    table = pd.concat([argy_process_page(page) for page in range(min_page, 3220)])
+    table = pd.concat([argy_process_page(page) for page in range(min_page, 3225)])
     return table
     
     
