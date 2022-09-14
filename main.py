@@ -144,7 +144,7 @@ def retrieve_argy_cash_prices(min_page: int):
             return table
         except:
             return None
-    table = pd.concat([argy_process_page(page) for page in range(min_page, 3240)])
+    table = pd.concat([argy_process_page(page) for page in range(min_page, 3245)])
     return table
     
     
@@ -189,12 +189,35 @@ def argy_cash_prices():
     table = table[table['NAME']!='Soya']
     table.to_csv(r'G:\My Drive\cash_prices\cash_prices_argentina.csv', index=None)
     
+def brz_cash_prices():
+    url='https://portaldeinformacoes.conab.gov.br/downloads/arquivos/PrecosSemanalUF.txt'
+
+    map_dict = {
+        'MILHO': 'Corn',
+        'TRIGO': 'Wheat',
+        'SOJA': 'Soybeans',
+    }
+
+    table = pd.read_csv(url, sep=';')
+    table['produto'] = table['produto'].str.strip()
+    table['valor_produto_kg'] = pd.to_numeric(table['valor_produto_kg'].replace(',','.', regex=True))
+    table['data_inicial_final_semana'] = table['data_inicial_final_semana'].str.strip()
+    table['data_inicial_final_semana'] = pd.to_datetime(table['data_inicial_final_semana'].str.split(' - ').str[0], format='%d-%m-%Y')
+    table = table.loc[(table['produto'].isin(map_dict.keys()))&(table['dsc_nivel_comercializacao']=='PREÇO RECEBIDO P/ PR')]
+
+    table = table.groupby(['produto', 'uf','data_inicial_final_semana'], as_index=False)['valor_produto_kg'].mean()
+    table.columns = ['NAME', 'STATE', 'TRADEDATE', 'CLOSE']
+    table['CLOSE'] = table['CLOSE']*1000
+    table['NAME'] = table['NAME'].replace(map_dict)
+    table.to_csv(r'G:\My Drive\cash_prices\cash_prices_brazil.csv', index=None)
+
 
 def main():
     russia_cash_prices()
     canada_cash_prices()
     eu_cash_prices()
     argy_cash_prices()
+    brz_cash_prices()
 
 if __name__ == '__main__':
     main()

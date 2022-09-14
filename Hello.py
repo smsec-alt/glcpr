@@ -10,10 +10,10 @@ creds = credentials()
 
 def main():   
     with st.sidebar:
-        add_country = st.selectbox("Choose a Region", ('Canada', 'Russia', 'Europe', 'Argentina', 'India'))
+        add_country = st.selectbox("Choose a Region", ('Canada', 'Russia', 'Europe', 'Argentina', 'Brazil','India'))
         country_name=add_country
         df = download_dataframe(creds=creds, filename=f'cash_prices_{country_name.lower()}.csv', parse_dates=['TRADEDATE'])
-        if add_country in ['Europe', 'India']:
+        if add_country in ['Europe', 'India', 'Brazil']:
             add_state = st.selectbox("Choose a State", tuple(df['STATE'].unique()))
             country_name=add_state
             df = df.query('STATE==@country_name')
