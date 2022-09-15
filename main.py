@@ -200,6 +200,7 @@ def brz_cash_prices():
 
     table = pd.read_csv(url, sep=';')
     table['produto'] = table['produto'].str.strip()
+    table['uf'] = table['uf'].str.strip()
     table['valor_produto_kg'] = pd.to_numeric(table['valor_produto_kg'].replace(',','.', regex=True))
     table['data_inicial_final_semana'] = table['data_inicial_final_semana'].str.strip()
     table['data_inicial_final_semana'] = pd.to_datetime(table['data_inicial_final_semana'].str.split(' - ').str[0], format='%d-%m-%Y')
@@ -212,12 +213,35 @@ def brz_cash_prices():
     table.to_csv(r'G:\My Drive\cash_prices\cash_prices_brazil.csv', index=None)
 
 
+def usa_cash_prices():
+    def process_report(report_id: int):
+        response = requests.get(f'https://marsapi.ams.usda.gov/services/v1.2/reports/{report_id}?q=delivery_point=Country%20Elevators&allSections=true', auth=('api_key', '3D/lwIkPEFlr+GS5E8suDG6WJY/bMxxu'))
+        df = pd.json_normalize(response.json()[1]['results'])
+        df['basis'] = df[['basis Min', 'basis Max']].mean(axis=1)
+        df['commodity'] = np.where(df['commodity']=="Wheat", df['class'] + " "+df['commodity'],df['commodity'])
+        df['report_date'] = pd.to_datetime(df['report_date'])
+
+        df = df[['report_date','market_location_state','trade_loc', 'commodity', 'basis', 'avg_price']]
+        df = df.melt(id_vars=['market_location_state','report_date', 'commodity', 'trade_loc'])
+        df = df.groupby(['market_location_state','report_date', 'commodity', 'variable'], as_index=False).mean()
+        return df
+
+    reports_list = [2711, 2771, 2850, 2851, 2886, 2912, 2932, 3100, 3186, 3192, 3225, 3463]
+    table = pd.concat([process_report(report_id) for report_id in reports_list])
+    table = table.dropna()
+    table.columns = ['STATE', 'TRADEDATE', 'NAME', 'VARIABLE', 'CLOSE']
+    table['VARIABLE'] = table['VARIABLE'].replace({'avg_price':'Cash Price', 'basis':'Basis'})
+    table.to_csv(r'G:\My Drive\cash_prices\cash_prices_usa.csv', index=None)
+
+
 def main():
+    usa_cash_prices()
     russia_cash_prices()
     canada_cash_prices()
     eu_cash_prices()
     argy_cash_prices()
     brz_cash_prices()
+
 
 if __name__ == '__main__':
     main()

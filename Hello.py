@@ -10,13 +10,16 @@ creds = credentials()
 
 def main():   
     with st.sidebar:
-        add_country = st.selectbox("Choose a Region", ('Canada', 'Russia', 'Europe', 'Argentina', 'Brazil','India'))
+        add_country = st.selectbox("Choose a Region", ('Canada', 'USA', 'Europe', 'Russia','Argentina', 'Brazil','India'))
         country_name=add_country
         df = download_dataframe(creds=creds, filename=f'cash_prices_{country_name.lower()}.csv', parse_dates=['TRADEDATE'])
-        if add_country in ['Europe', 'India', 'Brazil']:
+        if add_country in ['Europe', 'India', 'Brazil', 'USA']:
             add_state = st.selectbox("Choose a State", tuple(df['STATE'].unique()))
             country_name=add_state
             df = df.query('STATE==@country_name')
+        if add_country in ['USA']:
+            add_secondary_variable = st.selectbox("Choose a Variable", tuple(df['VARIABLE'].unique()))
+            df = df.query('VARIABLE==@add_secondary_variable')
         all_categories = tuple(df['NAME'].unique())
         min_start_wwht, max_start_wwht = df['TRADEDATE'].min(), df['TRADEDATE'].max()
                
