@@ -215,9 +215,24 @@ def brz_cash_prices():
 
 def usa_cash_prices():
     def process_report(report_id: int):
+        # print(report_id)
+        conversion_dict = {
+            'Wheat': 0.36744,
+            'Corn': 0.393680,
+            'Soybeans': 0.367440,
+            'Sorghum': 0.393680,
+            'Barley': 0.459300,
+            'Millet': 0.36744,
+            'White Oats': 0.648420,
+            'Sunflower Seeds': 0.734870,
+        }
         response = requests.get(f'https://marsapi.ams.usda.gov/services/v1.2/reports/{report_id}?q=delivery_point=Country%20Elevators&allSections=true', auth=('api_key', '3D/lwIkPEFlr+GS5E8suDG6WJY/bMxxu'))
         df = pd.json_normalize(response.json()[1]['results'])
         df['basis'] = df[['basis Min', 'basis Max']].mean(axis=1)
+        df['factor'] = df['commodity'].replace(conversion_dict)
+        df['factor'] = pd.to_numeric(df['factor'], errors='coerce')
+        df['basis'] = df['basis']*df['factor']
+        df['avg_price'] = df['avg_price']*df['factor']
         df['commodity'] = np.where(df['commodity']=="Wheat", df['class'] + " "+df['commodity'],df['commodity'])
         df['report_date'] = pd.to_datetime(df['report_date'])
 
