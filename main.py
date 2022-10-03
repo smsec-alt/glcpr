@@ -250,12 +250,18 @@ def usa_cash_prices():
 
 
 def main():
+    print('usa')
     usa_cash_prices()
-    russia_cash_prices()
+    print('canada')
     canada_cash_prices()
+    print('eu')
     eu_cash_prices()
+    print('argy')
     argy_cash_prices()
+    print('brz')
     brz_cash_prices()
+    print('rus')
+    russia_cash_prices()
 
 
 if __name__ == '__main__':
