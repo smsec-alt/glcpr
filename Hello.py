@@ -66,7 +66,7 @@ def main():
                                   labels={'CLOSE':add_category, 'TRADEDATE':'', 'YEAR':'Year'}))
         st.plotly_chart(get_seasonality_chart(subdf, 'TRADEDATE', 'CLOSE', f'{country_name} -- {add_category} Cash Prices Seasonality',
                                               labels={'CLOSE':add_category, 'TRADEDATE':'', 'YEAR':'Year'}))
-# 
+
     if (add_country == 'Europe') and (add_metadata):
         st.markdown('### Metadata')     
         df_metadata = pd.read_csv(f'./metadata/metadata_{add_country.lower()}.csv')
