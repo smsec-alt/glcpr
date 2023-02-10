@@ -25,16 +25,15 @@ def get_seasonality_chart(df: pd.DataFrame, x_values:str, y_values:str, title:st
     df['DATE'] = df[x_values] + pd.offsets.DateOffset(year=2020)
     df['YEAR'] = df[x_values].dt.year
     current_year = df['YEAR'].max()
-    hist_df = df[df['YEAR']<current_year-1]
+    hist_df = df[df['YEAR']<current_year]
     summary_df = hist_df.pivot_table(index='DATE', columns='YEAR', values=y_values).interpolate()
     summary_df['Mean'] = summary_df.mean(axis=1)
     summary_df['Max'] = summary_df.max(axis=1)
     summary_df['Min'] = summary_df.min(axis=1)
 
-    fig = px.line(hist_df, x='DATE', y=y_values,
+    fig = px.line(hist_df[hist_df['YEAR']<current_year-1], x='DATE', y=y_values,
                     color_discrete_sequence=px.colors.qualitative.G10, color='YEAR',
                     labels=labels)
-    # labels={y_values:'', 'DATE':'', 'YEAR':'Year'})
     fig.update_traces(visible="legendonly")
 
     fig.add_trace(go.Scatter(x=summary_df.index, y=summary_df['Max'], name='',

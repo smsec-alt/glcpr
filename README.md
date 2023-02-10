@@ -1,1 +1,0 @@
-# Grains Cash Prices

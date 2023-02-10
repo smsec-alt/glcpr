@@ -1,14 +1,16 @@
+import os
 import requests
 import numpy as np
 import pandas as pd
 import zipfile, io
 import streamlit as st
 from datetime import datetime
+from gcs import GCS
 pd.options.mode.chained_assignment = None
 
+os.chdir(r"X:\AGS\Devs\PRICES\cash_prices_global")
 
-st.set_page_config(page_title="Cash Prices", layout='wide',)
-
+gcs = GCS()
 
 def eu_cash_prices():
     
@@ -60,7 +62,7 @@ def eu_cash_prices():
     df = df.groupby(['Member State Code', 'Product Name', 'Week - End Date'], as_index=False).mean()
     df.columns = ['STATE', 'NAME', 'TRADEDATE', 'CLOSE']
     df['STATE'] = df['STATE'].replace(eu_reg_dict)
-    df.to_csv(r'G:\My Drive\cash_prices\cash_prices_europe.csv', index=None)
+    gcs.to_csv(df, 'global_cash/cash_prices_europe.csv', index=None)
 
 
 def canada_cash_prices():
@@ -109,7 +111,7 @@ def canada_cash_prices():
     table['NAME'] = table['NAME'].str.replace('2','')
     table['NAME'] = table['NAME'].str.replace('3','')
     table = table.query('NAME != "Wheat CW"')
-    table.to_csv(r'G:\My Drive\cash_prices\cash_prices_canada.csv', index=None)
+    gcs.to_csv(table, 'global_cash/cash_prices_canada.csv', index=None)
 
 
 def russia_cash_prices():
@@ -118,7 +120,7 @@ def russia_cash_prices():
     df_cpt['TRADEDATE'] = pd.to_datetime(df_cpt['TRADEDATE'], format='%d.%m.%Y')
     df_cpt.drop('Volume', axis=1, inplace=True)
     df_cpt['NAME'] = 'WHCPT'
-    df_cpt.to_csv(r'G:\My Drive\cash_prices\cash_prices_russia.csv', index=None)
+    gcs.to_csv(df_cpt, 'global_cash/cash_prices_russia.csv', index=None)
 
 
 def retrieve_argy_cash_prices(min_page: int):
@@ -144,7 +146,7 @@ def retrieve_argy_cash_prices(min_page: int):
             return table
         except:
             return None
-    table = pd.concat([argy_process_page(page) for page in range(min_page, 3260)])
+    table = pd.concat([argy_process_page(page) for page in range(min_page, 3400)])
     return table
     
     
@@ -162,7 +164,7 @@ def argy_cash_prices():
         'noviembre':11,
         'octubre':10,
         'septiembre':9}
-    table_old = pd.read_csv(r'G:\My Drive\cash_prices\cash_prices_argentina_raw.csv')
+    table_old = pd.read_csv('data/cash_prices_argentina_raw.csv')
     last_page = table_old['page'].max()+1
 
     try:
@@ -170,7 +172,7 @@ def argy_cash_prices():
         table = pd.concat([table_old, table_new])
     except ValueError:
         table = table_old
-    table.to_csv(r'G:\My Drive\cash_prices\cash_prices_argentina_raw.csv', index=None)
+    table.to_csv('data/cash_prices_argentina_raw.csv', index=None)
 
     table['grain'][table['grain'].str.contains('Corn')] = 'Corn'
     table['grain'][table['grain'].str.contains('Wheat')] = 'Wheat'
@@ -187,7 +189,8 @@ def argy_cash_prices():
     table = table.groupby(['date', 'grain'], as_index=False)['prices'].mean()
     table.columns = ['TRADEDATE', 'NAME', 'CLOSE']
     table = table[table['NAME']!='Soya']
-    table.to_csv(r'G:\My Drive\cash_prices\cash_prices_argentina.csv', index=None)
+    gcs.to_csv(table, 'global_cash/cash_prices_argentina.csv', index=None)
+
     
 def brz_cash_prices():
     url='https://portaldeinformacoes.conab.gov.br/downloads/arquivos/PrecosSemanalUF.txt'
@@ -210,7 +213,7 @@ def brz_cash_prices():
     table.columns = ['NAME', 'STATE', 'TRADEDATE', 'CLOSE']
     table['CLOSE'] = table['CLOSE']*1000
     table['NAME'] = table['NAME'].replace(map_dict)
-    table.to_csv(r'G:\My Drive\cash_prices\cash_prices_brazil.csv', index=None)
+    gcs.to_csv(table, 'global_cash/cash_prices_brazil.csv', index=None)
 
 
 def usa_cash_prices():
@@ -246,23 +249,23 @@ def usa_cash_prices():
     table = table.dropna()
     table.columns = ['STATE', 'TRADEDATE', 'NAME', 'VARIABLE', 'CLOSE']
     table['VARIABLE'] = table['VARIABLE'].replace({'avg_price':'Cash Price', 'basis':'Basis'})
-    table.to_csv(r'G:\My Drive\cash_prices\cash_prices_usa.csv', index=None)
+    gcs.to_csv(table, 'global_cash/cash_prices_usa.csv', index=None)
+
 
 
 def main():
-    print('usa')
-    usa_cash_prices()
-    print('canada')
-    canada_cash_prices()
-    print('eu')
-    eu_cash_prices()
     print('argy')
     argy_cash_prices()
+    print('usa')
+    usa_cash_prices()
+    print('eu')
+    eu_cash_prices()
     print('brz')
     brz_cash_prices()
     print('rus')
     russia_cash_prices()
-
+    # print('canada')
+    # canada_cash_prices()
 
 if __name__ == '__main__':
     main()

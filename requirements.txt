@@ -7,3 +7,7 @@ protobuf==3.19.4
 requests==2.28.0
 SQLAlchemy==1.4.39
 streamlit==1.10.0
+openpyxl==3.1.0
+google-cloud-storage==2.7.0
+fsspec==2023.1.0
+gcsfs==2023.1.0
